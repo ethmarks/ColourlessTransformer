@@ -2,11 +2,18 @@ import streamlit as st
 from PIL import Image
 import io
 
+# Function to read markdown from a file
+def load_markdown(file_path):
+    with open(file_path, 'r') as file:
+        return file.read()
+
 # Title and Description
 st.title("ColourlessTransformer")
-st.markdown("""
-**ColourlessTransformer** is an interface for the Paint Transformer neural network, which performs feed-forward neural painting with stroke prediction.
-""")
+
+# Load markdown from a file
+markdown_path = "streamlit_description.md"
+markdown_content = load_markdown(markdown_path)
+st.markdown(markdown_content)
 
 # File uploader for image input
 uploaded_file = st.file_uploader("Drag and drop your image here", type=["png", "jpg", "jpeg"])

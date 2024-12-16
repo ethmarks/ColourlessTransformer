@@ -1,0 +1,1 @@
+**ColourlessTransformer** is an interface for the Paint Transformer neural network, which performs feed-forward neural painting with stroke prediction.
