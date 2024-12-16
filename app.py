@@ -2,6 +2,8 @@ import streamlit as st
 from PIL import Image
 import io
 
+st.set_page_config(layout="wide")
+
 # Function to read markdown from a file
 def load_markdown(file_path):
     with open(file_path, 'r') as file:
