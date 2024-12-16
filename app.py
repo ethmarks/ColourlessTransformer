@@ -49,9 +49,9 @@ if st.button("Generate"):
         with st.spinner('Processing your image...'):
             import time
             time.sleep(3)  # Simulate a 3-second processing delay
-
+            import tempfile
+            
             if animation:
-                import tempfile
                 # Create a .gif cycling between red and blue
                 frames = []
                 for _ in range(10):  # 10 frames for the gif
