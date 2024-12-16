@@ -36,14 +36,23 @@ if uploaded_file is not None:
 # Generate Button
 if st.button("Generate"):
     if uploaded_file is not None:
-        # Dummy Processing Logic
-        st.write("Processing your image...")
-        # Placeholder for static image generation
-        processed_result = Image.new("RGB", image.size, (0, 255, 0))  # Dummy green frame
-
-        # Display the generated image in the second column
+        # Create a placeholder for the generated image with loading text
         with col2:
-            st.image(processed_result, caption="Generated Static Image", use_container_width=True)
+            placeholder = st.empty()  # Placeholder for the generated image
+
+            # Display the spinner and status inside the placeholder
+            with placeholder.container():
+                # First show the spinner and the processing text
+                with st.spinner('Processing your image...'):
+                    import time  # Import time here to simulate delay
+                    time.sleep(3)  # Simulate a 3-second processing delay
+
+                    # Dummy Processing Logic (e.g., create a green frame)
+                    processed_result = Image.new("RGB", image.size, (0, 255, 0))  # Dummy green frame
+
+                    # Now, after the delay, remove the loading message and show the processed image
+                    placeholder.empty()  # Remove the spinner and message
+                    st.image(processed_result, caption="Generated Static Image", use_container_width=True)
 
     else:
         st.error("Please upload an image before clicking Generate.")
