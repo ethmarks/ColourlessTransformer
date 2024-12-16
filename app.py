@@ -1,6 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw
-import io
+from PIL import Image
 
 # Set page config to wide mode
 st.set_page_config(layout="wide")
@@ -17,6 +16,12 @@ st.title("ColourlessTransformer")
 markdown_path = "streamlit_description.md"
 markdown_content = load_markdown(markdown_path)
 st.markdown(markdown_content)
+
+# Initialize session state variables if not already set
+if "generated_result" not in st.session_state:
+    st.session_state["generated_result"] = None
+if "generated_result_type" not in st.session_state:
+    st.session_state["generated_result_type"] = None
 
 # File uploader for image input
 uploaded_file = st.file_uploader("Drag and drop your image here", type=["png", "jpg", "jpeg"])
@@ -38,14 +43,14 @@ if uploaded_file is not None:
 
 # Generate Button
 if st.button("Generate"):
+    # Dummy Processing Logic
     if uploaded_file is not None:
-        # Dummy Processing Logic
-        with st.spinner('Processing your image...'):        
+        # Simulate a processing delay
+        with st.spinner('Processing your image...'):
             import time
             time.sleep(3)  # Simulate a 3-second processing delay
 
             if animation:
-                import os
                 import tempfile
                 # Create a .gif cycling between red and blue
                 frames = []
@@ -58,17 +63,30 @@ if st.button("Generate"):
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.gif') as temp_file:
                     gif_path = temp_file.name  # Get the temp file path
                     frames[0].save(gif_path, save_all=True, append_images=frames[1:], loop=0, duration=500)
-
-                # Display the gif in the second column
-                with col2:
-                    st.image(gif_path, caption="Generated Animation", use_container_width=True)
+                
+                # Update session state with the GIF path
+                st.session_state["generated_result"] = gif_path
+                st.session_state["generated_result_type"] = "gif"
 
             else:
                 processed_result = Image.new("RGB", image.size, (0, 255, 0))  # Dummy green frame
+                
+                # Save the result to a temporary file
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+                    processed_result.save(temp_file.name)
+                    static_image_path = temp_file.name
 
-                # Display the generated image in the second column
-                with col2:
-                    st.image(processed_result, caption="Generated Static Image", use_container_width=True)
+                # Update session state with the static image path
+                st.session_state["generated_result"] = static_image_path
+                st.session_state["generated_result_type"] = "static"
 
     else:
         st.error("Please upload an image before clicking Generate.")
+
+# Display the generated result from session state
+if st.session_state["generated_result"]:
+    with col2:
+        if st.session_state["generated_result_type"] == "gif":
+            st.image(st.session_state["generated_result"], caption="Generated Animation", use_container_width=True)
+        else:
+            st.image(st.session_state["generated_result"], caption="Generated Static Image", use_container_width=True)
