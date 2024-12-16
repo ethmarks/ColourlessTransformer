@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageDraw
 import io
 
 # Set page config to wide mode
@@ -24,6 +24,9 @@ uploaded_file = st.file_uploader("Drag and drop your image here", type=["png", "
 # Create two columns for side-by-side display
 col1, col2 = st.columns(2)
 
+# Checkbox to toggle animation
+animation = st.checkbox('Animation')
+
 # Check if a file has been uploaded
 if uploaded_file is not None:
     # Open the image
@@ -36,17 +39,36 @@ if uploaded_file is not None:
 # Generate Button
 if st.button("Generate"):
     if uploaded_file is not None:
-        # Simulate a processing delay
-        with st.spinner('Processing your image...'):
-            import time  # Import time here to simulate delay
+        # Dummy Processing Logic
+        with st.spinner('Processing your image...'):        
+            import time
             time.sleep(3)  # Simulate a 3-second processing delay
 
-            # Dummy Processing Logic (e.g., create a green frame)
-            processed_result = Image.new("RGB", image.size, (0, 255, 0))  # Dummy green frame
+            if animation:
+                import os
+                import tempfile
+                # Create a .gif cycling between red and blue
+                frames = []
+                for _ in range(10):  # 10 frames for the gif
+                    color = (255, 0, 0) if _ % 2 == 0 else (0, 0, 255)  # Red and Blue frames
+                    frame = Image.new("RGB", image.size, color)
+                    frames.append(frame)
+                
+                # Save the gif to a temporary directory
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.gif') as temp_file:
+                    gif_path = temp_file.name  # Get the temp file path
+                    frames[0].save(gif_path, save_all=True, append_images=frames[1:], loop=0, duration=500)
 
-        # Display the generated image in the second column
-        with col2:
-            st.image(processed_result, caption="Generated Static Image", use_container_width=True)
+                # Display the gif in the second column
+                with col2:
+                    st.image(gif_path, caption="Generated Animation", use_container_width=True)
+
+            else:
+                processed_result = Image.new("RGB", image.size, (0, 255, 0))  # Dummy green frame
+
+                # Display the generated image in the second column
+                with col2:
+                    st.image(processed_result, caption="Generated Static Image", use_container_width=True)
 
     else:
         st.error("Please upload an image before clicking Generate.")
