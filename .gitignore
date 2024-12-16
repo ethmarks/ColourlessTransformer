@@ -1,0 +1,12 @@
+# Byte-compiled files
+__pycache__/
+
+# Virtual environment directory
+venv/
+
+# VSCode settings
+.vscode/
+
+# Environment variables and credentials
+.env
+*.env
