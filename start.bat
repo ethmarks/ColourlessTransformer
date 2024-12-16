@@ -8,10 +8,10 @@ if not exist "venv" (
 
 call venv\Scripts\activate
 
-:: Run the Python application
+:: Run the Streamlit application
 if exist "app.py" (
-    echo Running app.py...
-    python app.py
+    echo Running Streamlit app...
+    streamlit run c:/Users/ethan/source/repos/ColourlessTransformer/app.py
 ) else (
     echo app.py not found! Make sure the script exists in the directory.
     exit /b 1
