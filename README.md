@@ -12,7 +12,10 @@ Original paper by Songhua Liu, Tianwei Lin, Dongliang He, Fu Li, Ruifeng Deng, X
 
 ## Prerequisites
 
-* PyTorch 1.7+ and other dependencies (torchvision, visdom, dominate, and other common python libs)
+- PyTorch
+- Numpy
+- Pillow
+- Streamlit
 
 ## Usage
 
