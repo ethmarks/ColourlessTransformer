@@ -1,5 +1,9 @@
 import streamlit as st
 from PIL import Image
+from inference.inference import main
+import glob
+import os
+import tempfile
 
 # Set page config to wide mode
 st.set_page_config(layout="wide")
@@ -47,58 +51,52 @@ if uploaded_file is not None:
 
 # Generate Button
 if st.button("Generate"):
-    # Dummy Processing Logic
     if uploaded_file is not None:
+        # Save the uploaded file to a temporary path
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+            temp_path = temp_file.name
+            image.save(temp_path)
+
         # Simulate a processing delay
         with st.spinner("Processing your image..."):
-            import time
+            output_dir = "output/"
+            os.makedirs(output_dir, exist_ok=True)
 
-            time.sleep(3)  # Simulate a 3-second processing delay
-            import tempfile
+            # Run the PaintTransformer inference function
+            main(
+                input_path=temp_path,
+                model_path="inference/model.pth",
+                output_dir=output_dir,
+                need_animation=animation,
+                serial=animation,
+            )
 
+            # Handle the results
             if animation:
-                # Create a .gif cycling between red and blue
-                frames = []
-                for _ in range(10):  # 10 frames for the gif
-                    color = (
-                        (255, 0, 0) if _ % 2 == 0 else (0, 0, 255)
-                    )  # Red and Blue frames
-                    frame = Image.new("RGB", image.size, color)
-                    frames.append(frame)
-
-                # Save the gif to a temporary directory
-                with tempfile.NamedTemporaryFile(
-                    delete=False, suffix=".gif"
-                ) as temp_file:
-                    gif_path = temp_file.name  # Get the temp file path
-                    frames[0].save(
-                        gif_path,
-                        save_all=True,
-                        append_images=frames[1:],
-                        loop=0,
-                        duration=500,
-                    )
+                # Create gif from generated output images
+                filename = os.path.splitext(os.path.basename(temp_path))[0]
+                in_dir = os.path.join(output_dir, filename, "*.jpg")
+                out_path = f"{output_dir}/animation.gif"
+                img, *imgs = [Image.open(f) for f in sorted(glob.glob(in_dir))]
+                img.save(
+                    fp=out_path,
+                    format="GIF",
+                    append_images=imgs,
+                    save_all=True,
+                    duration=100,
+                    loop=0,
+                )
 
                 # Update session state with the GIF path
-                st.session_state["generated_result"] = gif_path
+                st.session_state["generated_result"] = out_path
                 st.session_state["generated_result_type"] = "gif"
-
             else:
-                processed_result = Image.new(
-                    "RGB", image.size, (0, 255, 0)
-                )  # Dummy green frame
-
-                # Save the result to a temporary file
-                with tempfile.NamedTemporaryFile(
-                    delete=False, suffix=".png"
-                ) as temp_file:
-                    processed_result.save(temp_file.name)
-                    static_image_path = temp_file.name
+                # Get the last generated image
+                final_image_path = sorted(glob.glob(f"{output_dir}/*.jpg"))[-1]
 
                 # Update session state with the static image path
-                st.session_state["generated_result"] = static_image_path
+                st.session_state["generated_result"] = final_image_path
                 st.session_state["generated_result_type"] = "static"
-
     else:
         st.error("Please upload an image before clicking Generate.")
 
