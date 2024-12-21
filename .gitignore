@@ -10,3 +10,7 @@ venv/
 # Environment variables and credentials
 .env
 *.env
+
+# Image inputs and Outputs
+inference/output/
+inference/input/
