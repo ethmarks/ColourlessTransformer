@@ -59,7 +59,7 @@ if st.button("Generate"):
 
         # Simulate a processing delay
         with st.spinner("Processing your image..."):
-            output_dir = "output/"
+            output_dir = "inference/output/"
             os.makedirs(output_dir, exist_ok=True)
 
             # Run the PaintTransformer inference function
@@ -92,7 +92,7 @@ if st.button("Generate"):
                 st.session_state["generated_result_type"] = "gif"
             else:
                 # Get the last generated image
-                final_image_path = sorted(glob.glob(f"{output_dir}/*.jpg"))[-1]
+                final_image_path = sorted(glob.glob(f"{output_dir}/*"))[-1]
 
                 # Update session state with the static image path
                 st.session_state["generated_result"] = final_image_path
