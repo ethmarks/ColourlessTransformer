@@ -2,8 +2,8 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 from PIL import Image
-import network
-import morphology
+import inference.network as network
+import inference.morphology as morphology
 import os
 import math
 
@@ -390,13 +390,13 @@ def main(input_path, model_path, output_dir, need_animation=False, resize_h=None
     stroke_num = 8
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     net_g = network.Painter(5, stroke_num, 256, 8, 3, 3).to(device)
-    net_g.load_state_dict(torch.load(model_path))
+    net_g.load_state_dict(torch.load(model_path, weights_only=True))
     net_g.eval()
     for param in net_g.parameters():
         param.requires_grad = False
 
-    brush_large_vertical = read_img('brush/brush_large_vertical.png', 'L').to(device)
-    brush_large_horizontal = read_img('brush/brush_large_horizontal.png', 'L').to(device)
+    brush_large_vertical = read_img('inference/brush/brush_large_vertical.png', 'L').to(device)
+    brush_large_horizontal = read_img('inference/brush/brush_large_horizontal.png', 'L').to(device)
     meta_brushes = torch.cat(
         [brush_large_vertical, brush_large_horizontal], dim=0)
 
@@ -487,9 +487,9 @@ def main(input_path, model_path, output_dir, need_animation=False, resize_h=None
 
 
 if __name__ == '__main__':
-    main(input_path='input/chicago.jpg',
-         model_path='model.pth',
-         output_dir='output/',
+    main(input_path='inference/input/chicago.jpg',
+         model_path='inference/model.pth',
+         output_dir='inference/output/',
          need_animation=False,  # whether need intermediate results for animation.
          resize_h=None,         # resize original input to this size. None means do not resize.
          resize_w=None,         # resize original input to this size. None means do not resize.
