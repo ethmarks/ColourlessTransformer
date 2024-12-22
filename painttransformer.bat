@@ -48,8 +48,3 @@ if %errorlevel% neq 0 (
     echo.
 )
 
-:: Commit changes with a message
-:: Ensure Git is initialized and configured in the directory
-git add inference/output/*
-git commit -m "feat: Processed and resized image %~nI"
-exit /b
