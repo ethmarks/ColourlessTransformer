@@ -1,4 +1,4 @@
-# Colourless Transformer
+# Colourless Transformer - Streamlit
 
 Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
 
