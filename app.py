@@ -15,10 +15,7 @@ def load_markdown(file_path):
         return file.read()
 
 
-# Title and Description
-st.title("ColourlessTransformer")
-
-# Load markdown from a file
+# Load markdown description from a file
 markdown_path = "streamlit_description.md"
 markdown_content = load_markdown(markdown_path)
 st.markdown(markdown_content)
