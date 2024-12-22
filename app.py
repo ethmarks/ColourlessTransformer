@@ -48,7 +48,7 @@ if uploaded_file is not None:
         # Calculate the new size while maintaining the aspect ratio
         resize_ratio = min(max_dimension / image.width, max_dimension / image.height)
         new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio))
-        
+
         # Resize the image
         image = image.resize(new_size, Image.LANCZOS)
 
@@ -99,7 +99,9 @@ if st.button("Generate"):
                 st.session_state["generated_result_type"] = "gif"
             else:
                 # Get the last generated image
-                final_image_path = os.path.join(output_dir, os.path.basename(temp_file.name))
+                final_image_path = os.path.join(
+                    output_dir, os.path.basename(temp_file.name)
+                )
 
                 # Update session state with the static image path
                 st.session_state["generated_result"] = final_image_path
@@ -127,8 +129,12 @@ if st.session_state["generated_result"]:
 if st.button("Clear Output Directory"):
     output_dir = "inference/output/"
     # Get all image files in the output directory
-    image_files = glob.glob(os.path.join(output_dir, "*.png")) + glob.glob(os.path.join(output_dir, "*.jpg")) + glob.glob(os.path.join(output_dir, "*.jpeg"))
-    
+    image_files = (
+        glob.glob(os.path.join(output_dir, "*.png"))
+        + glob.glob(os.path.join(output_dir, "*.jpg"))
+        + glob.glob(os.path.join(output_dir, "*.jpeg"))
+    )
+
     # Delete all the files
     for file in image_files:
         os.remove(file)
