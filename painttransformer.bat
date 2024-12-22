@@ -1,4 +1,7 @@
 @echo off
+:: Change to the directory where the batch file is located
+cd /d "%~dp0"
+
 :: Check if at least one argument (image file) is passed
 if "%~1"=="" (
     echo Drag and drop image files onto this batch file to process them.
