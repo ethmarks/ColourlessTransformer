@@ -32,11 +32,29 @@ exit /b
 set "INPUT_FILE=%~1"
 
 :: Notify which file is being processed
-echo Processing file: %INPUT_FILE%
+echo Resizing and processing file: %INPUT_FILE%
 echo.
 
-:: Run the Python script with the input file, using raw string literals for paths
-python -c "import time; print('Running inference...'); time.sleep(2); from inference.inference import main; main(input_path=r'%INPUT_FILE%', model_path=r'inference/model.pth', output_dir=r'inference/output/', need_animation=False, serial=False)"
+:: Resize the image to a max of 512 pixels using Python and save it to a temp path
+python -c "from PIL import Image; import os; \
+input_path = r'%INPUT_FILE%'; \
+output_path = os.path.join(os.path.dirname(input_path), 'temp_resized.png'); \
+image = Image.open(input_path); \
+max_dim = 512; \
+resize_ratio = min(max_dim / image.width, max_dim / image.height) if image.width > max_dim or image.height > max_dim else 1; \
+new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio)); \
+image.resize(new_size, Image.LANCZOS).save(output_path); \
+print(f'Resized image saved to {output_path}')"
+
+:: Check if the resized file exists
+if not exist "%~dp0temp_resized.png" (
+    echo Failed to resize image: %INPUT_FILE%.
+    echo.
+    exit /b
+)
+
+:: Run the Python script with the resized file
+python -c "from inference.inference import main; main(input_path=r'%~dp0temp_resized.png', model_path=r'inference/model.pth', output_dir=r'inference/output/', need_animation=False, serial=False)"
 
 :: Check the exit status of Python
 if %errorlevel% neq 0 (
@@ -48,8 +66,11 @@ if %errorlevel% neq 0 (
     echo.
 )
 
+:: Delete the temporary resized image
+del "%~dp0temp_resized.png"
+
 :: Commit changes with a message
 :: Ensure Git is initialized and configured in the directory
 git add inference/output/*
-git commit -m "feat: Processed image %~nI"
+git commit -m "feat: Processed and resized image %~nI"
 exit /b
