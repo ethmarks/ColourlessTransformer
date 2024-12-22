@@ -20,8 +20,8 @@ exit /b
 :: Set up variables
 set "INPUT_FILE=%~1"
 
-:: Run the Python script with the input file
-python -c "from inference.inference import main; main(input_path='%INPUT_FILE%', model_path='inference/model.pth', output_dir='inference/output/', need_animation=False, serial=False)"
+:: Run the Python script with the input file, using raw string literals for paths
+python -c "from inference.inference import main; main(input_path=r'%INPUT_FILE%', model_path=r'inference/model.pth', output_dir=r'inference/output/', need_animation=False, serial=False)"
 
 :: Check the exit status of Python
 if %errorlevel% neq 0 (
