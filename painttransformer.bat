@@ -35,26 +35,8 @@ set "INPUT_FILE=%~1"
 echo Resizing and processing file: %INPUT_FILE%
 echo.
 
-:: Resize the image to a max of 512 pixels using Python and save it to a temp path
-python -c "from PIL import Image; import os; \
-input_path = r'%INPUT_FILE%'; \
-output_path = os.path.join(os.path.dirname(input_path), 'temp_resized.png'); \
-image = Image.open(input_path); \
-max_dim = 512; \
-resize_ratio = min(max_dim / image.width, max_dim / image.height) if image.width > max_dim or image.height > max_dim else 1; \
-new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio)); \
-image.resize(new_size, Image.LANCZOS).save(output_path); \
-print(f'Resized image saved to {output_path}')"
-
-:: Check if the resized file exists
-if not exist "%~dp0temp_resized.png" (
-    echo Failed to resize image: %INPUT_FILE%.
-    echo.
-    exit /b
-)
-
-:: Run the Python script with the resized file
-python -c "from inference.inference import main; main(input_path=r'%~dp0temp_resized.png', model_path=r'inference/model.pth', output_dir=r'inference/output/', need_animation=False, serial=False)"
+:: Call the Python script to resize and process the image
+python resize_and_process.py "%INPUT_FILE%"
 
 :: Check the exit status of Python
 if %errorlevel% neq 0 (
@@ -65,9 +47,6 @@ if %errorlevel% neq 0 (
     echo Successfully processed: %INPUT_FILE%.
     echo.
 )
-
-:: Delete the temporary resized image
-del "%~dp0temp_resized.png"
 
 :: Commit changes with a message
 :: Ensure Git is initialized and configured in the directory
