@@ -122,3 +122,15 @@ if st.session_state["generated_result"]:
                 caption="Generated Static Image",
                 use_container_width=True,
             )
+
+# Button to clear all image files from output directory
+if st.button("Clear Output Directory"):
+    output_dir = "inference/output/"
+    # Get all image files in the output directory
+    image_files = glob.glob(os.path.join(output_dir, "*.png")) + glob.glob(os.path.join(output_dir, "*.jpg")) + glob.glob(os.path.join(output_dir, "*.jpeg"))
+    
+    # Delete all the files
+    for file in image_files:
+        os.remove(file)
+
+    st.success("All generated images have been cleared.")

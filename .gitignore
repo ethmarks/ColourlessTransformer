@@ -11,6 +11,5 @@ venv/
 .env
 *.env
 
-# Image inputs and Outputs
+# Image output directory
 inference/output/
-inference/input/
