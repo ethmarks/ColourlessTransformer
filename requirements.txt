@@ -1,4 +1,5 @@
-torch
+torch==2.4.0+cu124 --find-links https://download.pytorch.org/whl/cu124
+torchvision==0.15.2+cu124 --find-links https://download.pytorch.org/whl/cu124
 numpy
 Pillow
 streamlit
