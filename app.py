@@ -45,6 +45,16 @@ if uploaded_file is not None:
     # Open the image
     image = Image.open(uploaded_file)
 
+    # Check if the image dimensions exceed 512px
+    max_dimension = 512
+    if image.width > max_dimension or image.height > max_dimension:
+        # Calculate the new size while maintaining the aspect ratio
+        resize_ratio = min(max_dimension / image.width, max_dimension / image.height)
+        new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio))
+        
+        # Resize the image
+        image = image.resize(new_size, Image.LANCZOS)
+
     # Display the uploaded image in the first column
     with col1:
         st.image(image, caption="Uploaded Image", use_container_width=True)
@@ -92,7 +102,7 @@ if st.button("Generate"):
                 st.session_state["generated_result_type"] = "gif"
             else:
                 # Get the last generated image
-                final_image_path = sorted(glob.glob(f"{output_dir}/*"))[-1]
+                final_image_path = os.path.join(output_dir, os.path.basename(temp_file.name))
 
                 # Update session state with the static image path
                 st.session_state["generated_result"] = final_image_path
