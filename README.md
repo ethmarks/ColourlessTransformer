@@ -3,11 +3,24 @@
 ColourlessTransformer is a simple interface for Paint Transformer, a neural network that performs *Feed Forward Neural Painting with Stroke Prediction*.
 
 ## Demo
-
-| Original | ![A photo of a walkway with rose bushes](images\walkway.webp) |
-| -------- | ------- |
-| PaintTransformer | ![A painterly image of a walkway with rose bushes](images\walkway_painttransformer.webp) |
-| PaintTransformer Animation | ![An animation of the a painterly image of a walkway with rose bushes being painted](images\walkway.gif) |
+<table>
+  <thead>
+    <tr>
+      <th>Original</th>
+      <th><img src="images\walkway.jpg" alt="A photo of a walkway with rose bushes"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PaintTransformer</td>
+      <td><img src="images\walkway_painttransformer.jpg" alt="A painterly image of a walkway with rose bushes"></td>
+    </tr>
+    <tr>
+      <td>PaintTransformer Animation</td>
+      <td><img src="images\walkway.gif" alt="An animation of the a painterly image of a walkway"></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Authors
 
