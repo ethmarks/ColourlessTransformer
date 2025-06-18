@@ -17,7 +17,7 @@ ColourlessTransformer is a simple interface for Paint Transformer, a neural netw
     </tr>
     <tr>
       <td>PaintTransformer Animation</td>
-      <td><img src="images\walkway.gif" alt="An animation of the a painterly image of a walkway"></td>
+      <td><img src="images\walkway.webm" alt="An animation of the a painterly image of a walkway"></td>
     </tr>
   </tbody>
 </table>
