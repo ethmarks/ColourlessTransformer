@@ -2,6 +2,14 @@
 :: Change to the directory where the batch file is located
 cd /d "%~dp0"
 
+:: Activate virtual environment
+if not exist "venv" (
+    echo Virtual environment not found. Please run install.bat first.
+    exit /b 1
+)
+
+call venv\Scripts\activate
+
 :: Check if at least one argument (image file) is passed
 if "%~1"=="" (
     echo Drag and drop image files onto this batch file to process them.
