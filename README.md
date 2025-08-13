@@ -10,55 +10,73 @@ ColourlessTransformer is a simple interface for Paint Transformer, a neural netw
 
 ## Authors
 
-Interface by [@ColourlessSpearmint](https://github.com/ColourlessSpearmint).
+Interface by Ethan Marks ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
 
-PyTorch implementation by [@Huage001](https://github.com/Huage001)
+PyTorch implementation by [@Huage001](https://github.com/Huage001).
 
-Original paper by Songhua Liu, Tianwei Lin, Dongliang He, Fu Li, Ruifeng Deng, Xin Li, Errui Ding, and Hao Wang
+Original paper by Songhua Liu, Tianwei Lin, Dongliang He, Fu Li, Ruifeng Deng, Xin Li, Errui Ding, and Hao Wang.
 
 ## Prerequisites
 
-- PyTorch
-- Numpy
-- Pillow
-- Streamlit
+- Python 3
+- Git
 
-## Usage
+## Dependencies
 
-1. Clone the repository:
+- numpy>=2.3.2
+- pillow>=11.3.0
+- streamlit>=1.48.1
+- torch>=2.8.0
+- torchvision>=0.23.0
+
+## Installation
+
+1. Clone the repository
 
 ```bash
 git clone https://github.com/ColourlessSpearmint/ColourlessTransformer.git
 ```
-2. Navigate into project directory:
+
+2. Navigate into project directory
 
 ```bash
 cd ColourlessTransformer
 ```
 
-3. Run the install.bat file to install the required dependencies:
-```bash
-./install.bat
-```
+3. Install the required dependencies
 
-4. (optional) If you lack a CUDA-enabled GPU, install the CPU version of PyTorch:
+Installing the dependencies can be done with pip...
 
 ```bash
-pip uninstall -y torch torchvision
-pip install torch torchvision
+python -m venv
+pip install .
 ```
+
+...or with [uv](https://docs.astral.sh/uv/).
+
+```bash
+uv sync
+```
+
+## Usage
 
 ### Streamlit
 
-To use the Streamlit app, run any of the following commands:
+You can run the Streamlit interface by running `main.py` with Python...
 
-- ```streamlit run app.py```
-- ```./start_streamlit.bat```
-- ```python start_streamlit.py```
+```bash
+python main.py
+```
 
-### Drag-Drop
+...or with the `streamlit` command.
 
-You can also drag and drop your images onto painttransformer.bat. Your images will be processed automatically and saved to the directory of the input files.
+```bash
+streamlit run app.py
+```
+
+### Drag-Drop (Windows only)
+
+If you're on Windows, you can process images by dragging them onto painttransformer.bat. Your images will be processed automatically and saved to the directory of the input files.
 
 ## License
 
