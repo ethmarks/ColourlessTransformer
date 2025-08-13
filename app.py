@@ -3,6 +3,7 @@ from PIL import Image
 from colourlesstransformer import process_image_complete, clear_output_directory
 import tempfile
 import os
+from torch import OutOfMemoryError
 
 # Set page config to wide mode
 st.set_page_config(layout="wide")
@@ -35,7 +36,14 @@ col1, col2 = st.columns(2)
 
 # Checkboxes for options
 animation = st.checkbox("Animation")
-resize = st.checkbox("Resize)", value=True)
+resize = st.checkbox("Resize", value=True, help="Resize the input image to a maximum dimension of 512 pixels. Vastly speeds up processing and reduces resource requirements for minimal quality reduction.")
+
+# Add informational section about resizing
+if not resize:
+    st.info(
+        "⚠️ **Resizing disabled**: Large images may cause GPU out of memory errors. "
+        "If processing fails, try enabling the resize option above."
+    )
 
 # Check if a file has been uploaded
 if uploaded_file is not None:
@@ -64,6 +72,21 @@ if st.button("Generate"):
                 st.session_state["generated_result"] = result_path
                 st.session_state["generated_result_type"] = result_type
 
+            except OutOfMemoryError as e:
+                # Get image dimensions for more helpful error message
+                img_width, img_height = image.size
+                st.error(
+                    "⚠️ **GPU Out of Memory Error**\n\n"
+                    f"Your image ({img_width}x{img_height} pixels) is too large for your GPU memory.\n\n"
+                    "**Try these solutions:**\n"
+                    "- ✅ **Enable the 'Resize' option above** (recommended)\n"
+                    "- Use a smaller input image\n"
+                    "- Close other GPU-intensive applications\n"
+                    "- Try processing without animation if enabled\n\n"
+                    f"Technical details: {str(e)}"
+                )
+            except Exception as e:
+                st.error(f"An error occurred while processing the image: {str(e)}")
             finally:
                 # Clean up temporary input file
                 if temp_path and os.path.exists(temp_path):
