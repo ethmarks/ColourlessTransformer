@@ -25,6 +25,17 @@ def resize_image(input_path, max_dim=512):
     return temp_file.name
 
 
+def copy_image_to_temp(input_path):
+    """
+    Copy the image to a temporary file without resizing.
+    Returns the path to the temporary file.
+    """
+    image = Image.open(input_path)
+    temp_file = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    image.save(temp_file.name)
+    return temp_file.name
+
+
 def create_animation_gif(temp_file_path, output_dir="inference/output/"):
     """
     Create a GIF animation from the generated frame sequence.
@@ -105,18 +116,21 @@ def process_image(temp_file, output_path=None, need_animation=False, serial=Fals
         return processed_image_path if os.path.exists(processed_image_path) else None
 
 
-def process_image_complete(input_path, animation=False, output_path=None):
+def process_image_complete(input_path, animation=False, output_path=None, resize=True):
     """
-    Complete image processing workflow: resize, process, and optionally create animation.
+    Complete image processing workflow: optionally resize, process, and optionally create animation.
     Returns a tuple of (result_path, result_type) where result_type is 'static' or 'gif'.
     """
-    # Resize the image
-    resized_path = resize_image(input_path)
+    # Resize or copy the image
+    if resize:
+        processed_path = resize_image(input_path)
+    else:
+        processed_path = copy_image_to_temp(input_path)
 
     try:
         # Process the image
-        processed_path = process_image(
-            resized_path,
+        result_path = process_image(
+            processed_path,
             output_path=output_path,
             need_animation=animation,
             serial=animation
@@ -124,28 +138,29 @@ def process_image_complete(input_path, animation=False, output_path=None):
 
         if animation:
             # Create GIF from animation frames
-            gif_path = create_animation_gif(resized_path)
+            gif_path = create_animation_gif(processed_path)
             if gif_path:
                 return gif_path, "gif"
             else:
                 # Fallback to static image if GIF creation fails
-                return processed_path, "static"
+                return result_path, "static"
         else:
-            return processed_path, "static"
+            return result_path, "static"
 
     finally:
-        # Clean up temporary resized file
-        if os.path.exists(resized_path):
-            os.unlink(resized_path)
+        # Clean up temporary processed file
+        if os.path.exists(processed_path):
+            os.unlink(processed_path)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python colourlesstransformer.py <image_path> [--animation]")
+        print("Usage: python colourlesstransformer.py <image_path> [--animation] [--no-resize]")
         sys.exit(1)
 
     input_file = sys.argv[1]
     animation = "--animation" in sys.argv
+    resize = "--no-resize" not in sys.argv
 
     file_dir, file_name = os.path.split(input_file)
     file_base, file_ext = os.path.splitext(file_name)
@@ -159,8 +174,12 @@ if __name__ == "__main__":
     print(f"Processing image: {input_file}")
     if animation:
         print("Animation mode enabled")
+    if resize:
+        print("Resizing image to 512px maximum dimension")
+    else:
+        print("Processing image at original size")
 
-    result_path, result_type = process_image_complete(input_file, animation, output_file)
+    result_path, result_type = process_image_complete(input_file, animation, output_file, resize)
 
     if result_path:
         print(f"Successfully created {result_type}: {result_path}")

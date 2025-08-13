@@ -33,8 +33,9 @@ uploaded_file = st.file_uploader(
 # Create two columns for side-by-side display
 col1, col2 = st.columns(2)
 
-# Checkbox to toggle animation
+# Checkboxes for options
 animation = st.checkbox("Animation")
+resize = st.checkbox("Resize)", value=True)
 
 # Check if a file has been uploaded
 if uploaded_file is not None:
@@ -57,7 +58,7 @@ if st.button("Generate"):
         with st.spinner("Processing your image..."):
             try:
                 # Process the image using comprehensive function
-                result_path, result_type = process_image_complete(temp_path, animation)
+                result_path, result_type = process_image_complete(temp_path, animation, None, resize)
 
                 # Update session state with the result
                 st.session_state["generated_result"] = result_path
