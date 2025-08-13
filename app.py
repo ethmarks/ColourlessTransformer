@@ -1,9 +1,8 @@
 import streamlit as st
 from PIL import Image
-from inference.inference import main
-import glob
-import os
+from colourlesstransformer import process_image_complete, clear_output_directory
 import tempfile
+import os
 
 # Set page config to wide mode
 st.set_page_config(layout="wide")
@@ -42,16 +41,6 @@ if uploaded_file is not None:
     # Open the image
     image = Image.open(uploaded_file)
 
-    # Check if the image dimensions exceed 512px
-    max_dimension = 512
-    if image.width > max_dimension or image.height > max_dimension:
-        # Calculate the new size while maintaining the aspect ratio
-        resize_ratio = min(max_dimension / image.width, max_dimension / image.height)
-        new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio))
-
-        # Resize the image
-        image = image.resize(new_size, Image.LANCZOS)
-
     # Display the uploaded image in the first column
     with col1:
         st.image(image, caption="Uploaded Image", use_container_width=True)
@@ -66,46 +55,18 @@ if st.button("Generate"):
 
         # Simulate a processing delay
         with st.spinner("Processing your image..."):
-            output_dir = "inference/output/"
-            os.makedirs(output_dir, exist_ok=True)
+            try:
+                # Process the image using comprehensive function
+                result_path, result_type = process_image_complete(temp_path, animation)
 
-            # Run the PaintTransformer inference function
-            main(
-                input_path=temp_path,
-                model_path="inference/model.pth",
-                output_dir=output_dir,
-                need_animation=animation,
-                serial=animation,
-            )
+                # Update session state with the result
+                st.session_state["generated_result"] = result_path
+                st.session_state["generated_result_type"] = result_type
 
-            # Handle the results
-            if animation:
-                # Create gif from generated output images
-                filename = os.path.splitext(os.path.basename(temp_path))[0]
-                in_dir = os.path.join(output_dir, filename, "*.jpg")
-                out_path = f"{output_dir}/animation.gif"
-                img, *imgs = [Image.open(f) for f in sorted(glob.glob(in_dir))]
-                img.save(
-                    fp=out_path,
-                    format="GIF",
-                    append_images=imgs,
-                    save_all=True,
-                    duration=100,
-                    loop=0,
-                )
-
-                # Update session state with the GIF path
-                st.session_state["generated_result"] = out_path
-                st.session_state["generated_result_type"] = "gif"
-            else:
-                # Get the last generated image
-                final_image_path = os.path.join(
-                    output_dir, os.path.basename(temp_file.name)
-                )
-
-                # Update session state with the static image path
-                st.session_state["generated_result"] = final_image_path
-                st.session_state["generated_result_type"] = "static"
+            finally:
+                # Clean up temporary input file
+                if temp_path and os.path.exists(temp_path):
+                    os.unlink(temp_path)
     else:
         st.error("Please upload an image before clicking Generate.")
 
@@ -127,16 +88,5 @@ if st.session_state["generated_result"]:
 
 # Button to clear all image files from output directory
 if st.button("Clear Output Directory"):
-    output_dir = "inference/output/"
-    # Get all image files in the output directory
-    image_files = (
-        glob.glob(os.path.join(output_dir, "*.png"))
-        + glob.glob(os.path.join(output_dir, "*.jpg"))
-        + glob.glob(os.path.join(output_dir, "*.jpeg"))
-    )
-
-    # Delete all the files
-    for file in image_files:
-        os.remove(file)
-
+    clear_output_directory()
     st.success("All generated images have been cleared.")
