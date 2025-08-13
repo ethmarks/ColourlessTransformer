@@ -49,7 +49,7 @@ def process_image(temp_file, output_path):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python resize_and_process.py <image_path>")
+        print("Usage: python painttransformer.py <image_path>")
         sys.exit(1)
 
     input_file = sys.argv[1]

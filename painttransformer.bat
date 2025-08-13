@@ -44,7 +44,7 @@ echo Resizing and processing file: %INPUT_FILE%
 echo.
 
 :: Call the Python script to resize and process the image
-python resize_and_process.py "%INPUT_FILE%"
+python painttransformer.py "%INPUT_FILE%"
 
 :: Check the exit status of Python
 if %errorlevel% neq 0 (
@@ -55,4 +55,3 @@ if %errorlevel% neq 0 (
     echo Successfully processed: %INPUT_FILE%.
     echo.
 )
-
