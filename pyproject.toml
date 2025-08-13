@@ -4,4 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.3.2",
+    "pillow>=11.3.0",
+    "streamlit>=1.48.1",
+    "torch>=2.8.0",
+    "torchvision>=0.23.0",
+]
