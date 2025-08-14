@@ -20,12 +20,9 @@ Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/Colourless
 1. **Upload an Image:** Use the file uploader to drag and drop an image or select it from your file system. Supported formats: .png, .jpg, .jpeg.
 2. **Set Parameters (optional):** Change how ColourlessTransformer processes your image by configuring the settings.
     - **Animation**: allows you to choose whether to generate a static image of the finished image or an animated GIF showing the entire painting process.
-    - **Resize**: resizes the input image to a maximum of 512 pixels. This is **highly recommended**, as it vastly decreases processing time and memory usage without significantly affecting quality of the output.
+    - **Resize**: resizes the input image to a maximum of 512 pixels. This is **highly recommended**, as it vastly decreases processing time and memory usage without significantly affecting the quality of the output.
 3. **Generate Results:** Click the Generate button to process your uploaded image. Depending on your hardware, the processing should take between a few seconds and a few minutes.
-
-### **View Results**
-
-Once processing is complete, view the result in the right column. You can download the result by right-clicking and selecting "Save Image As..."
+4. **View Results:** Once processing is complete, view the result in the right column. You can download the result by right-clicking and selecting "Save Image As...".
 """
 st.markdown(markdown_content)
 
