@@ -1,10 +1,11 @@
 # ColourlessTransformer
 
-ColourlessTransformer is a simple interface for Paint Transformer, a neural network that performs *Feed Forward Neural Painting with Stroke Prediction*.
+ColourlessTransformer is a simple interface for Paint Transformer, a neural network that performs _Feed Forward Neural Painting with Stroke Prediction_.
 
 ## Demo
+
 | Original                   | ![A photo of a walkway with rose bushes](images/walkway.jpg)                            |
-|----------------------------|-----------------------------------------------------------------------------------------|
+| -------------------------- | --------------------------------------------------------------------------------------- |
 | PaintTransformer           | ![A painterly image of a walkway with rose bushes](images/walkway_painttransformer.jpg) |
 | PaintTransformer Animation | ![An animation of the a painterly image of a walkway](images/walkway.gif)               |
 
@@ -62,7 +63,7 @@ uv sync
 
 ### Streamlit
 
-You can run the Streamlit interface by running `main.py` with Python...
+You can run the ColourlessTransformer Streamlit interface by running `main.py` with Python...
 
 ```bash
 python main.py
@@ -74,9 +75,41 @@ python main.py
 streamlit run app.py
 ```
 
+### Python API
+
+You can also use ColourlessTransformer programmatically in your Python code:
+
+```python
+from colourlesstransformer import process_image_complete
+
+# Process a single image
+result_path, result_type = process_image_complete(
+    input_path="path/to/image.jpg",
+    animation=False,      # Set to True for GIF animation
+    output_path=None,     # Optional: specify custom output path
+    resize=True           # Set to False to keep original size
+)
+
+print(f"Created {result_type} at: {result_path}")
+```
+
+#### Function Parameters
+
+- `input_path` (str): Path to the input image
+- `animation` (bool): Whether to create an animated GIF (default: False)
+- `output_path` (str, optional): Custom output path. If None, saves to input directory
+- `resize` (bool): Whether to resize image to 512px max dimension (default: True)
+
+#### Return Values
+
+Returns a tuple of `(result_path, result_type)` where:
+
+- `result_path`: Path to the generated file
+- `result_type`: Either "static" or "gif"
+
 ### Drag-Drop (Windows only)
 
-If you're on Windows, you can process images by dragging them onto painttransformer.bat. Your images will be processed automatically and saved to the directory of the input files.
+If you're on Windows, you can process images by dragging them onto painttransformer.bat. Each image will be processed automatically and the processed image will be saved to the directory of its respective input image.
 
 ## License
 
