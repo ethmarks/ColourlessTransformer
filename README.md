@@ -46,10 +46,11 @@ cd ColourlessTransformer
 
 3. Install the required dependencies
 
-Installing the dependencies can be done with pip...
+Installing the dependencies can be done with a built-in python venv...
 
 ```bash
-python -m venv
+python -m venv .venv
+.venv\Scripts\activate
 pip install .
 ```
 
