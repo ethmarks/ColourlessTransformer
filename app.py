@@ -1,23 +1,29 @@
 import streamlit as st
 from PIL import Image
-from inference.inference import main
-import glob
-import os
+from colourlesstransformer import process_image_complete, clear_output_directory
 import tempfile
+import os
+from torch import OutOfMemoryError
 
 # Set page config to wide mode
 st.set_page_config(layout="wide")
 
+markdown_content = """
+# ColourlessTransformer
 
-# Function to read markdown from a file
-def load_markdown(file_path):
-    with open(file_path, "r") as file:
-        return file.read()
+Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
 
+[ColourlessTransformer](https://colourlessspearmint.github.io/blog/colourlesstransformer/) is an interface for the Paint Transformer neural network, which performs feed-forward neural painting with stroke prediction.
 
-# Load markdown description from a file
-markdown_path = "streamlit_description.md"
-markdown_content = load_markdown(markdown_path)
+## Usage
+
+1. **Upload an Image:** Use the file uploader to drag and drop an image or select it from your file system. Supported formats: .png, .jpg, .jpeg.
+2. **Set Parameters (optional):** Change how ColourlessTransformer processes your image by configuring the settings.
+    - **Animation**: allows you to choose whether to generate a static image of the finished image or an animated GIF showing the entire painting process.
+    - **Resize**: resizes the input image to a maximum of 512 pixels. This is **highly recommended**, as it vastly decreases processing time and memory usage without significantly affecting the quality of the output.
+3. **Generate Results:** Click the Generate button to process your uploaded image. Depending on your hardware, the processing should take between a few seconds and a few minutes.
+4. **View Results:** Once processing is complete, view the result in the right column. You can download the result by right-clicking and selecting "Save Image As...".
+"""
 st.markdown(markdown_content)
 
 # Initialize session state variables if not already set
@@ -26,31 +32,29 @@ if "generated_result" not in st.session_state:
 if "generated_result_type" not in st.session_state:
     st.session_state["generated_result_type"] = None
 
+# Create two columns for side-by-side display
+col1, col2 = st.columns(2)
+
 # File uploader for image input
 uploaded_file = st.file_uploader(
     "Drag and drop your image here", type=["png", "jpg", "jpeg"]
 )
 
-# Create two columns for side-by-side display
-col1, col2 = st.columns(2)
+# Checkboxes for options
+animation = st.checkbox("Animation", value=False, help="Enable animation for the generated result.")
+resize = st.checkbox("Resize", value=True, help="Resize the input image to a maximum dimension of 512 pixels. Vastly speeds up processing and reduces resource usage for minimal quality reduction.")
 
-# Checkbox to toggle animation
-animation = st.checkbox("Animation")
+# Add informational section about resizing
+if not resize:
+    st.info(
+        "⚠️ **Resizing disabled**: Large images may cause GPU out of memory errors. "
+        "If processing fails, try enabling the resize option above."
+    )
 
 # Check if a file has been uploaded
 if uploaded_file is not None:
     # Open the image
     image = Image.open(uploaded_file)
-
-    # Check if the image dimensions exceed 512px
-    max_dimension = 512
-    if image.width > max_dimension or image.height > max_dimension:
-        # Calculate the new size while maintaining the aspect ratio
-        resize_ratio = min(max_dimension / image.width, max_dimension / image.height)
-        new_size = (int(image.width * resize_ratio), int(image.height * resize_ratio))
-
-        # Resize the image
-        image = image.resize(new_size, Image.LANCZOS)
 
     # Display the uploaded image in the first column
     with col1:
@@ -66,46 +70,33 @@ if st.button("Generate"):
 
         # Simulate a processing delay
         with st.spinner("Processing your image..."):
-            output_dir = "inference/output/"
-            os.makedirs(output_dir, exist_ok=True)
+            try:
+                # Process the image using comprehensive function
+                result_path, result_type = process_image_complete(temp_path, animation, None, resize)
 
-            # Run the PaintTransformer inference function
-            main(
-                input_path=temp_path,
-                model_path="inference/model.pth",
-                output_dir=output_dir,
-                need_animation=animation,
-                serial=animation,
-            )
+                # Update session state with the result
+                st.session_state["generated_result"] = result_path
+                st.session_state["generated_result_type"] = result_type
 
-            # Handle the results
-            if animation:
-                # Create gif from generated output images
-                filename = os.path.splitext(os.path.basename(temp_path))[0]
-                in_dir = os.path.join(output_dir, filename, "*.jpg")
-                out_path = f"{output_dir}/animation.gif"
-                img, *imgs = [Image.open(f) for f in sorted(glob.glob(in_dir))]
-                img.save(
-                    fp=out_path,
-                    format="GIF",
-                    append_images=imgs,
-                    save_all=True,
-                    duration=100,
-                    loop=0,
+            except OutOfMemoryError as e:
+                # Get image dimensions for more helpful error message
+                img_width, img_height = image.size
+                st.error(
+                    "⚠️ **GPU Out of Memory Error**\n\n"
+                    f"Your image ({img_width}x{img_height} pixels) is too large for your GPU memory.\n\n"
+                    "**Try these solutions:**\n"
+                    "- ✅ **Enable the 'Resize' option above** (recommended)\n"
+                    "- Use a smaller input image\n"
+                    "- Close other GPU-intensive applications\n"
+                    "- Try processing without animation if enabled\n\n"
+                    f"Technical details: {str(e)}"
                 )
-
-                # Update session state with the GIF path
-                st.session_state["generated_result"] = out_path
-                st.session_state["generated_result_type"] = "gif"
-            else:
-                # Get the last generated image
-                final_image_path = os.path.join(
-                    output_dir, os.path.basename(temp_file.name)
-                )
-
-                # Update session state with the static image path
-                st.session_state["generated_result"] = final_image_path
-                st.session_state["generated_result_type"] = "static"
+            except Exception as e:
+                st.error(f"An error occurred while processing the image: {str(e)}")
+            finally:
+                # Clean up temporary input file
+                if temp_path and os.path.exists(temp_path):
+                    os.unlink(temp_path)
     else:
         st.error("Please upload an image before clicking Generate.")
 
@@ -127,16 +118,5 @@ if st.session_state["generated_result"]:
 
 # Button to clear all image files from output directory
 if st.button("Clear Output Directory"):
-    output_dir = "inference/output/"
-    # Get all image files in the output directory
-    image_files = (
-        glob.glob(os.path.join(output_dir, "*.png"))
-        + glob.glob(os.path.join(output_dir, "*.jpg"))
-        + glob.glob(os.path.join(output_dir, "*.jpeg"))
-    )
-
-    # Delete all the files
-    for file in image_files:
-        os.remove(file)
-
+    clear_output_directory()
     st.success("All generated images have been cleared.")
