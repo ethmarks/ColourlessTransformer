@@ -9,7 +9,7 @@ from torch import OutOfMemoryError
 st.set_page_config(layout="wide")
 
 markdown_content = """
-# Colourless Transformer - Streamlit
+# ColourlessTransformer
 
 Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
 
@@ -17,19 +17,11 @@ Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/Colourless
 
 ## Usage
 
-### **Upload an Image**
-
-Use the file uploader to drag and drop an image or select it from your file system. Supported formats: .png, .jpg, .jpeg.
-
-The app will automatically resize the image to a maximum of 512 pixels. This will drastically decrease processing time for large images without significantly affecting output quality.
-
-### **Choose Output Format**
-
-Animation Toggle: Enable the checkbox to generate an animation (GIF) instead of a static image.
-
-### **Generate Results**
-
-Click the Generate button to process your uploaded image. Depending on your hardware, the processing should take between a few seconds and a few minutes.
+1. **Upload an Image:** Use the file uploader to drag and drop an image or select it from your file system. Supported formats: .png, .jpg, .jpeg.
+2. **Set Parameters (optional):** Change how ColourlessTransformer processes your image by configuring the settings.
+    - **Animation**: allows you to choose whether to generate a static image of the finished image or an animated GIF showing the entire painting process.
+    - **Resize**: resizes the input image to a maximum of 512 pixels. This is **highly recommended**, as it vastly decreases processing time and memory usage without significantly affecting quality of the output.
+3. **Generate Results:** Click the Generate button to process your uploaded image. Depending on your hardware, the processing should take between a few seconds and a few minutes.
 
 ### **View Results**
 
@@ -43,17 +35,17 @@ if "generated_result" not in st.session_state:
 if "generated_result_type" not in st.session_state:
     st.session_state["generated_result_type"] = None
 
+# Create two columns for side-by-side display
+col1, col2 = st.columns(2)
+
 # File uploader for image input
 uploaded_file = st.file_uploader(
     "Drag and drop your image here", type=["png", "jpg", "jpeg"]
 )
 
-# Create two columns for side-by-side display
-col1, col2 = st.columns(2)
-
 # Checkboxes for options
-animation = st.checkbox("Animation")
-resize = st.checkbox("Resize", value=True, help="Resize the input image to a maximum dimension of 512 pixels. Vastly speeds up processing and reduces resource requirements for minimal quality reduction.")
+animation = st.checkbox("Animation", value=False, help="Enable animation for the generated result.")
+resize = st.checkbox("Resize", value=True, help="Resize the input image to a maximum dimension of 512 pixels. Vastly speeds up processing and reduces resource usage for minimal quality reduction.")
 
 # Add informational section about resizing
 if not resize:
