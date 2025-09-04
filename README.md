@@ -4,10 +4,9 @@ ColourlessTransformer is a simple interface for Paint Transformer, a neural netw
 
 ## Demo
 
-| Original                   | ![A photo of a walkway with rose bushes](images/walkway.jpg)                            |
-| -------------------------- | --------------------------------------------------------------------------------------- |
-| PaintTransformer           | ![A painterly image of a walkway with rose bushes](images/walkway_painttransformer.jpg) |
-| PaintTransformer Animation | ![An animation of the a painterly image of a walkway](images/walkway.gif)               |
+| Original                                                     | PaintTransformer                                                                        | PaintTransformer Animation                                                |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| ![A photo of a walkway with rose bushes](images/walkway.jpg) | ![A painterly image of a walkway with rose bushes](images/walkway_painttransformer.jpg) | ![An animation of the a painterly image of a walkway](images/walkway.gif) |
 
 ## Authors
 
