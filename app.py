@@ -11,9 +11,9 @@ st.set_page_config(layout="wide")
 markdown_content = """
 # ColourlessTransformer
 
-Created by **Ethan Marks** ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
+Created by **Ethan Marks** ([@ethmarks](https://github.com/ethmarks)).
 
-[ColourlessTransformer](https://colourlessspearmint.github.io/blog/colourlesstransformer/) is an interface for the Paint Transformer neural network, which performs feed-forward neural painting with stroke prediction.
+[ColourlessTransformer](https://ethmarks.github.io/blog/colourlesstransformer/) is an interface for the Paint Transformer neural network, which performs feed-forward neural painting with stroke prediction.
 
 ## Usage
 

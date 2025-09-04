@@ -11,7 +11,7 @@ ColourlessTransformer is a simple interface for Paint Transformer, a neural netw
 
 ## Authors
 
-Interface by Ethan Marks ([@ColourlessSpearmint](https://github.com/ColourlessSpearmint)).
+Interface by Ethan Marks ([@ethmarks](https://github.com/ethmarks)).
 
 PyTorch implementation by [@Huage001](https://github.com/Huage001).
 
@@ -35,7 +35,7 @@ Original paper by Songhua Liu, Tianwei Lin, Dongliang He, Fu Li, Ruifeng Deng, X
 1. Clone the repository
 
 ```bash
-git clone https://github.com/ColourlessSpearmint/ColourlessTransformer.git
+git clone https://github.com/ethmarks/ColourlessTransformer.git
 ```
 
 2. Navigate into project directory

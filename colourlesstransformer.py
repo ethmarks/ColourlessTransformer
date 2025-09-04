@@ -25,7 +25,7 @@ Dependencies:
     - torch
     - torchvision
 
-Author: Ethan Marks (@ColourlessSpearmint)
+Author: Ethan Marks (@ethmarks)
 Based on Paint Transformer by Songhua Liu et al.
 """
 
